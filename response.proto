@@ -59,7 +59,22 @@ message RoomResponse {
     ResponseUpdateReadyCount update_ready_count = 5;
     ResponseAllReady all_ready = 6; // 所有玩家准备完毕
     ResponseAllLoaded all_loaded = 7;
+    ResponseCheckpointAccepted checkpoint_accepted = 10;
+    ResponseReplayFrames replay_frames = 11;
   }
+}
+
+// 低频权威恢复快照：只在双端摘要一致时由服务端采纳并缓存。
+message ResponseCheckpointAccepted {
+  uint32 frame_id = 1;
+  uint32 snapshot_kind = 2; // 1=hash-only, 2=inline
+}
+
+// 重连后从 checkpoint 帧开始返回历史操作；客户端按 ACK 快进消费。
+message ResponseReplayFrames {
+  repeated InGameResponse frames = 1;
+  uint32 from_frame_id = 2;
+  uint32 to_frame_id = 3;
 }
 
 // 客户端加入时通知的信息， 或者广播给所有客户端的信息
@@ -154,6 +169,8 @@ message InGameOperation {
 
   // 此操作列表在帧中处理的序号，数字越小，越先处理
   uint32 operation_index = 2;
+  // 发起者的 client_op_seq；非发起者为 0。用于把权威回包关联到本地预测。
+  uint32 response_client_op_seq = 8;
 
   oneof payload {
     ResponseCardPlant card_plant = 3;

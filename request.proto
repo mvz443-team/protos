@@ -72,6 +72,10 @@ message RequestBlank {
   uint32 state_hash = 3;
   // state_hash 对应的逻辑帧号
   uint32 hash_frame_id = 4;
+  // 低频权威状态摘要：0 或空表示本次不携带
+  string state_hash_hex = 5;
+  // 与 state_hash_hex 对应的可恢复 inline 快照 JSON；空表示只上报摘要
+  string inline_snapshot_json = 6;
 }
 
 // RequestGridOperation 格子操作请求
