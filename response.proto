@@ -75,6 +75,10 @@ message ResponseReplayFrames {
   repeated InGameResponse frames = 1;
   uint32 from_frame_id = 2;
   uint32 to_frame_id = 3;
+  // 已确认 checkpoint 的帧号；大于 0 时客户端应先恢复该帧快照再快进 frames。
+  uint32 checkpoint_frame_id = 4;
+  // checkpoint 对应的 inline 状态 JSON；为空表示服务端只缓存了 hash。
+  string inline_snapshot_json = 5;
 }
 
 // 客户端加入时通知的信息， 或者广播给所有客户端的信息
