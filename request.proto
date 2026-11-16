@@ -65,9 +65,13 @@ message RequestLoaded {
 // 每一个“不发送具体请求”的逻辑帧都应该发此请求
 message RequestBlank {
   // 客户端需要把此帧插入的位置
-  uint32 frame_id = 1; 
+  uint32 frame_id = 1;
   // 客户端上一次确认的帧
-  uint32 ack_frame_id = 2; 
+  uint32 ack_frame_id = 2;
+  // 客户端对该帧的确定性状态摘要（FNV-1a 32 位低 32 位）；0 表示本次不携带
+  uint32 state_hash = 3;
+  // state_hash 对应的逻辑帧号
+  uint32 hash_frame_id = 4;
 }
 
 // RequestGridOperation 格子操作请求
