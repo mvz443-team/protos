@@ -1,6 +1,8 @@
 // request.proto
 syntax = "proto3";
 
+import "common.proto";
+
 // 定义包名，这会影响 Go 和其他语言的命名空间
 package messages;
 
@@ -44,6 +46,8 @@ message RequestLeaveChooseMap {}
 // Ready 表示某个客户端在选卡界面切换准备就绪
 message RequestReady {
   bool isReady = 1;
+  // 开局确定性配置；服务端将其规范化后写入 AllReady 广播
+  LoadoutSnapshot loadout = 2;
 }
 
 // Loaded 表示某个客户端加载完毕

@@ -1,6 +1,8 @@
 // response.proto
 syntax = "proto3";
 
+import "common.proto";
+
 package messages;
 
 option go_package = "./;messages";
@@ -99,6 +101,8 @@ message ResponseAllReady {
   int32 seed = 2; 
   uint32 my_id = 3;
   repeated uint32 player_ids = 4; // 房间内所有玩家的ID列表
+  // 服务端规范化后的各玩家开局配置；客户端必须使用这里的数据
+  repeated PlayerLoadout loadouts = 5;
 }
 
 // 告知所有玩家， 所有玩家已经loaded， 可以开始InGame游戏

@@ -1,0 +1,36 @@
+// common.proto
+// 跨请求/响应复用的确定性开局上下文定义
+syntax = "proto3";
+
+package messages;
+
+option go_package = "./;messages";
+
+message LoadoutCard {
+  uint32 pid = 1;
+  uint32 level = 2;
+}
+
+message LoadoutModifier {
+  string key = 1;
+  int32 value = 2;
+}
+
+// 玩家开局携带的确定性配置。服务端收集后排序并广播给所有客户端，
+// 客户端不得使用本地存档覆盖这份 canonical 数据。
+message LoadoutSnapshot {
+  repeated LoadoutCard cards = 1;
+  // 关卡等级，影响 plants preset 的属性缩放
+  uint32 level = 2;
+  int32 initial_energy = 3;
+  uint32 initial_star_shards = 4;
+  // 局外全局加成；服务端排序后下发
+  repeated LoadoutModifier global_modifiers = 5;
+}
+
+message PlayerLoadout {
+  uint32 player_id = 1;
+  LoadoutSnapshot loadout = 2;
+  // 服务端按规范串计算的 FNV-1a 32 位摘要，便于客户端快速比对
+  string hash = 3;
+}
