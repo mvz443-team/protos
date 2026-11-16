@@ -118,6 +118,8 @@ message ResponseAllLoaded {}
 // 本局游戏结束（客户端要判断在InGame才会结算）
 message ResponseGameEnd {
   uint32 game_result = 1;
+  // 服务端权威结束帧；客户端必须推进到该帧后再结束（0 表示旧服务端未提供）
+  uint32 end_frame_id = 2;
 }
 
 // 房间关闭响应
