@@ -9,6 +9,12 @@ option go_package = "./;messages";
 // general
 message ResponseErrorMessage {
   string message = 1;
+  // 以下字段用于把失败回包关联到具体请求，便于客户端撤销乐观预测
+  uint32 uid = 2;
+  uint32 client_op_seq = 3;
+  uint32 col = 4;
+  uint32 row = 5;
+  uint32 process_frame_id = 6;
 }
 
 
