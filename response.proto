@@ -93,8 +93,15 @@ message ResponseRoomInfo {
   uint32 my_id = 3;
 
   // 房间内玩家情况
-  // json 字段
+  // json 字段: [{"id":int,"name":string,"addr":string,"ready":bool}]
   string peers = 4;
+
+  // 房间名（房主可修改）
+  string room_name = 5;
+
+  // 房间绑定的章节与关卡，创建房间时确定
+  uint32 chapter_id = 6;
+  uint32 stage_id = 7;
 }
 
 // 已经选择了地图
