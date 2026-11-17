@@ -61,7 +61,15 @@ message RoomResponse {
     ResponseAllLoaded all_loaded = 7;
     ResponseCheckpointAccepted checkpoint_accepted = 10;
     ResponseReplayFrames replay_frames = 11;
+    ResponseReturnToLobby return_to_lobby = 12; // PostGame 结算后返回等待房间
   }
+}
+
+// PostGame 结算完成后，任一玩家请求返回等待房间；
+// 服务端在房间仍存在时广播本消息并把房间重置回 InLobby。
+message ResponseReturnToLobby {
+  // 房间当前阶段（应为 InLobby），便于客户端校验
+  uint32 stage = 1;
 }
 
 // 低频权威恢复快照：只在双端摘要一致时由服务端采纳并缓存。
@@ -93,7 +101,8 @@ message ResponseRoomInfo {
   uint32 my_id = 3;
 
   // 房间内玩家情况
-  // json 字段: [{"id":int,"name":string,"addr":string,"ready":bool}]
+  // json 字段: [{"id":int,"name":string,"addr":string,"ready":bool,"state":int}]
+  // state: 1=在线, 2=断线（等待重连）
   string peers = 4;
 
   // 房间名（房主可修改）

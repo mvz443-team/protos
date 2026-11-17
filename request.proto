@@ -31,6 +31,9 @@ message Request {
     // 等待房间（InLobby）内的房间管理请求
     RequestUpdateRoom update_room = 10;
     RequestKickPlayer kick_player = 11;
+
+    // PostGame 结算后请求返回等待房间
+    RequestReturnToLobby return_to_lobby = 12;
   }
 }
 
@@ -172,3 +175,6 @@ message RequestUpdateRoom {
 message RequestKickPlayer {
   uint32 player_id = 1;
 }
+
+// PostGame 结算后任一玩家可请求返回等待房间；房间重置回 InLobby，可再次准备开局
+message RequestReturnToLobby {}
