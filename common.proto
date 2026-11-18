@@ -34,3 +34,26 @@ message PlayerLoadout {
   // 服务端按规范串计算的 FNV-1a 32 位摘要，便于客户端快速比对
   string hash = 3;
 }
+
+// 单张卡片的权威冷却状态，随心跳每帧上报，服务端按玩家保存为 profile。
+message CardCooldownState {
+  uint32 pid = 1;
+  uint32 level = 2;
+  // 剩余冷却毫秒数（取整）；0 表示已就绪
+  uint32 left_ms = 3;
+  // 总冷却毫秒数，用于客户端按比例恢复冷却条
+  uint32 total_ms = 4;
+}
+
+// 一名玩家最近的资源 profile：能量、星之碎片与卡槽冷却。
+// 页面刷新后本地模拟状态全部丢失，重连时由服务端随 AllReady 回传，
+// 让客户端在快照不可用时也能恢复资源与冷却显示。
+message PlayerResourceState {
+  uint32 player_id = 1;
+  uint32 energy = 2;
+  uint32 star_shards = 3;
+  repeated CardCooldownState card_cooldowns = 4;
+  // 该 profile 对应的权威帧号。客户端只在本地模拟追到该帧后才应用，
+  // 避免补帧期间用“终态”覆盖从初始状态重演的资源，造成摘要分叉。
+  uint32 frame_id = 5;
+}

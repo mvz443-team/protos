@@ -172,6 +172,9 @@ message ResponseAllReady {
   uint32 room_id = 6;
   uint32 chapter_id = 7;
   uint32 stage_id = 8;
+  // 服务端保存的各玩家最新资源 profile；正常开局为空，
+  // 重连时用于恢复能量、星之碎片与卡槽冷却。
+  repeated PlayerResourceState resources = 9;
 }
 
 // 告知所有玩家， 所有玩家已经loaded， 可以开始InGame游戏

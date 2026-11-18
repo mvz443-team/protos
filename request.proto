@@ -102,6 +102,13 @@ message RequestBlank {
   // 客户端统计的服务器往返延迟（毫秒）；0 表示未知。
   // 服务端用于挑选最低延迟的在线客户端作为重连快照来源。
   uint32 client_latency_ms = 8;
+  // 客户端当前资源 profile：每帧心跳上报，服务端按玩家保存，
+  // 供页面刷新后的重连恢复能量、星之碎片与卡槽冷却。
+  uint32 energy = 9;
+  uint32 star_shards = 10;
+  repeated CardCooldownState card_cooldowns = 11;
+  // 新客户端会置 true；旧客户端缺省 false 时不覆盖服务端已有 profile。
+  bool resources_reported = 12;
 }
 
 // RequestGridOperation 格子操作请求
