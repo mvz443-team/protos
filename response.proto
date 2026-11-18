@@ -65,6 +65,8 @@ message RoomResponse {
 
     ResponseRoomSync room_sync = 13;       // Loading 阶段每秒广播一次，带每位玩家加载进度
     ResponseRoomAllSync room_all_sync = 14; // 全员加载完成，所有客户端瞬间进入 MainGame
+    // 重连恢复：服务端向仍在线、延迟最低的客户端索取最近权威帧快照
+    ResponseSnapshotRequest snapshot_request = 15;
   }
 }
 
@@ -84,6 +86,14 @@ message ResponseRoomSync {
 
 // 全员加载完成，客户端应立即从 LoadScene 切到 MainGame 并开始游戏
 message ResponseRoomAllSync {}
+
+// 重连恢复：服务端请求仍在线客户端上传最近权威帧快照。
+// 仅延迟最低的在线客户端会收到；结果由 RequestSnapshotResponse 回传。
+message ResponseSnapshotRequest {
+  uint32 request_id = 1;
+  // 需要恢复的玩家 ID；客户端只用于诊断，不需要处理
+  uint32 target_player_id = 2;
+}
 
 // PostGame 结算完成后，任一玩家请求返回等待房间；
 // 服务端在房间仍存在时广播本消息并把房间重置回 InLobby。
@@ -158,6 +168,10 @@ message ResponseAllReady {
   repeated uint32 player_ids = 4; // 房间内所有玩家的ID列表
   // 服务端规范化后的各玩家开局配置；客户端必须使用这里的数据
   repeated PlayerLoadout loadouts = 5;
+  // 房间与关卡信息：页面刷新后客户端没有本地 GameParams，必须从这里恢复
+  uint32 room_id = 6;
+  uint32 chapter_id = 7;
+  uint32 stage_id = 8;
 }
 
 // 告知所有玩家， 所有玩家已经loaded， 可以开始InGame游戏

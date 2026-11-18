@@ -37,6 +37,9 @@ message Request {
 
     // Loading 阶段：客户端加载进度（1..100，100=完全加载好等待同步）
     RequestPlayerLoaded player_loaded = 13;
+
+    // 重连恢复：在线客户端响应服务端快照请求
+    RequestSnapshotResponse snapshot_response = 14;
   }
 }
 
@@ -96,6 +99,9 @@ message RequestBlank {
   // 客户端确定性哈希口径版本（SimulationState.version）。
   // 0 表示旧客户端未上报；服务端发现版本不一致时应拒绝比较哈希。
   uint32 state_hash_version = 7;
+  // 客户端统计的服务器往返延迟（毫秒）；0 表示未知。
+  // 服务端用于挑选最低延迟的在线客户端作为重连快照来源。
+  uint32 client_latency_ms = 8;
 }
 
 // RequestGridOperation 格子操作请求
@@ -191,3 +197,14 @@ message RequestKickPlayer {
 
 // PostGame 结算后任一玩家可请求返回等待房间；房间重置回 InLobby，可再次准备开局
 message RequestReturnToLobby {}
+
+// 在线客户端响应服务端的重连快照请求。
+// 服务端会把 inline_snapshot_json 转发给重连玩家，并补齐该帧到服务端权威帧之间的操作。
+message RequestSnapshotResponse {
+  // 对应 ResponseSnapshotRequest.request_id，用于丢弃过期响应
+  uint32 request_id = 1;
+  // 快照对应的客户端已执行帧号
+  uint32 frame_id = 2;
+  // InlineSnapshot JSON；空表示客户端当前无法提供快照
+  string inline_snapshot_json = 3;
+}
