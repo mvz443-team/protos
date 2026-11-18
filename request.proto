@@ -34,6 +34,9 @@ message Request {
 
     // PostGame 结算后请求返回等待房间
     RequestReturnToLobby return_to_lobby = 12;
+
+    // Loading 阶段：客户端加载进度（1..100，100=完全加载好等待同步）
+    RequestPlayerLoaded player_loaded = 13;
   }
 }
 
@@ -57,9 +60,16 @@ message RequestReady {
   LoadoutSnapshot loadout = 2;
 }
 
-// Loaded 表示某个客户端加载完毕
+// Loaded 表示某个客户端加载完毕（兼容旧协议；新流程使用 player_loaded）
 message RequestLoaded {
   bool isLoaded = 1;
+}
+
+// PlayerLoaded 表示某个客户端在 Loading 阶段的加载进度。
+// 客户端在加载素材、音效与初始化战局的过程中持续上报，1..100 的整数；
+// 100 表示完全加载好、正在等待其他玩家同步。
+message RequestPlayerLoaded {
+  uint32 progress = 1;
 }
 
 
@@ -83,6 +93,9 @@ message RequestBlank {
   string state_hash_hex = 5;
   // 与 state_hash_hex 对应的可恢复 inline 快照 JSON；空表示只上报摘要
   string inline_snapshot_json = 6;
+  // 客户端确定性哈希口径版本（SimulationState.version）。
+  // 0 表示旧客户端未上报；服务端发现版本不一致时应拒绝比较哈希。
+  uint32 state_hash_version = 7;
 }
 
 // RequestGridOperation 格子操作请求

@@ -62,8 +62,28 @@ message RoomResponse {
     ResponseCheckpointAccepted checkpoint_accepted = 10;
     ResponseReplayFrames replay_frames = 11;
     ResponseReturnToLobby return_to_lobby = 12; // PostGame 结算后返回等待房间
+
+    ResponseRoomSync room_sync = 13;       // Loading 阶段每秒广播一次，带每位玩家加载进度
+    ResponseRoomAllSync room_all_sync = 14; // 全员加载完成，所有客户端瞬间进入 MainGame
   }
 }
+
+// 一位玩家的加载同步进度
+message PlayerSyncProgress {
+  uint32 player_id = 1;
+  // 1..100；100 表示完全加载好、等待同步
+  uint32 progress = 2;
+  string name = 3;
+  bool loaded = 4; // progress >= 100
+}
+
+// Loading 阶段每秒下发的房间同步状态
+message ResponseRoomSync {
+  repeated PlayerSyncProgress players = 1;
+}
+
+// 全员加载完成，客户端应立即从 LoadScene 切到 MainGame 并开始游戏
+message ResponseRoomAllSync {}
 
 // PostGame 结算完成后，任一玩家请求返回等待房间；
 // 服务端在房间仍存在时广播本消息并把房间重置回 InLobby。
